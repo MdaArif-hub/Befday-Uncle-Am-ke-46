@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Quest for Uncle Am! 🎂</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Tambahan gaya untuk surat panjang */
+        .letter-content {
+            max-height: 85vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+        .letter-text {
+            text-align: justify;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #333;
+        }
+        .highlight { background-color: #fff3cd; padding: 2px 5px; border-radius: 3px; font-weight: bold; }
+        .lyrics { 
+            font-family: 'Dancing Script', cursive; 
+            font-size: 1.2rem; 
+            color: #d63384; 
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #d63384;
+            margin: 15px 0;
+            display: block;
+        }
+        .credit-section {
+            background: #f1f3f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+        .credit-title { font-weight: bold; color: #1a1a2e; text-decoration: underline; }
+        
+        /* Gaya butang baru yang lebih besar sikit untuk muatkan teks */
+        .btn-restart { 
+            margin-top: 25px; 
+            padding: 15px 30px; 
+            border-radius: 20px; 
+            background: #1a1a2e; 
+            color: #fff; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: 600;
+            line-height: 1.4;
+            transition: transform 0.2s;
+        }
+        .btn-restart:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <div class="container">
+        <div id="game-password">
+            <h2 class="instruction">Cuba cari apakah password nya? 😏</h2>
+            <div class="slots-container">
+                <div class="slot" data-needed="3"></div>
+                <div class="slot" data-needed="0"></div>
+                <div class="slot" data-needed="0"></div>
+                <div class="slot" data-needed="4"></div>
+            </div>
+            <div id="numbers-pool" class="numbers-pool"></div>
+        </div>
+
+        <div id="game-zone" class="hidden">
+            <div class="instruction-wrapper">
+                <h2 class="instruction">TEKAN KEK NI, UNCLE AM !🔥😆</h2>
+            </div>
+            
+            <div id="cake-wrapper" class="cake-wrapper">
+                <div id="cake" class="cake">🎂</div>
+                <div class="shadow"></div>
+            </div>
+
+            <div class="ui-container">
+                <div class="power-text">ENERGY: <span id="power-val">0</span>%</div>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="letter-overlay" class="letter-overlay">
+            <div class="confetti-container" id="confetti"></div>
+            <div id="letter-content" class="letter-content">
+                <div class="card-inner">
+                    <div class="gold-frame">
+                        <div class="header-icon">✉️</div>
+                        <h1 style="font-size: 1.5rem; margin-bottom: 5px;">Selamat Hari Jadi, <span style="color: #4361ee;">Uncle Am</span></h1>
+                        <h2 style="font-size: 1.1rem; color: #d4af37;">yang ke-46 ! 🎂</h2>
+                        
+                        <div class="line-divider"></div>
+                        
+                        <div class="letter-text">
+                            <p><i>( nyanyi pakai nada "Selamat .. Hari Raya, kami ucapkan pada semua ~" 🎶 )</i></p>
+                            
+                            <span class="lyrics">
+                                "Selamat .. hari jadi .. kepada <b>Uncle Am</b>, si pakcik kami ! <br>
+                                Semoga .. di hari yang bernilai ini .. semoga Uncle Am sentiasa dirahmati dan diberkati ~" 🎤✨
+                            </span>
+
+                            <p>
+                                Semoga, semoga dan semoga.. Uncle Am sentiasa <b>dimurahkan rezeki</b>, eh <span class="highlight">dimahalkan rezeki</span>.. dipermudahkan urusan, kerja projek sentiasa berjalan lancar, bisnes berjalan baik untuk dapat bersedekah banyak, belanja <b>Jad Jeddah</b> bawak jejalan balik kampung naik <span style="color: #e63946; font-weight: bold;">GTR</span> 😆, diberkati segala urusan dunia akhirat, dan sentiasa berada dalam lingkungan orang-orang baik.
+                            </p>
+
+                            <p><i>urmmmm, apa lagi eh ..</i> 🤔</p>
+
+                            <p>semuanya la ~ hihi ... 🤭 InshaAllah sempena harijadi ni juga Uncle Am doakan kami ni yang baru nak tumbuh besar, baru mula dengan akar dapat <b>tumbuh tegak macam pokok kayu jati</b>, kuat mental fizikal menghadapi dunia 20-an nihh, masih sentiasa ingat balik kepada keluarga, dan sebagainya. 🌳💪</p>
+
+                            <p>
+                                Terima kasih Uncle Am untuk menjadi pakcik kitaorang, ada juga yang pakcik dapat bergurau macam orang muda 20-an hohoho.. 🕺 bagi <i>motivate</i> kat <b>Aqil</b> tips jaga kesihatan juga, <b>Mia & Aiman</b> dapat belanja sakan ada pada waktu yang tengah rancak berbelanja.. 🛍️ berganti dengan <b>Umi</b> untuk urusan rumah ni dan rumah belakang.. semuanya, <b>terima kasih Uncle Am untuk semuanya ~</b> 🤗
+                            </p>
+
+                            <p>
+                                jadi .. nantikan kek maybe atau makan besar pada malam ni kalau ada.. hihi, sebab semuanya kerja sekolah .. 📝 tapi <span class="highlight">mesti buat punya</span>, tak pernah lagi miss <i>special day</i> for beday boy pula tuh .. tapi sape yang keluarkan modal tu je la, hihi 😗
+                            </p>
+
+                            <p>Itu sahaja dari kami, semoga Uncle Am sentiasa <b>kuat melalui rintangan cabaran dugaan</b> jugew ~ ✊✨</p>
+
+                            <p>Sekian dari kami;</p>
+
+                            <div class="credit-section">
+                                <p><span class="credit-title">DIRECTOR & DESIGNER</span><br>Danial 👨‍💻</p>
+                                <p><span class="credit-title">PENGISI IDEA SURAT</span><br>Danial, Darwish, Mia, Aiman 💡</p>
+                                <p><span class="credit-title">SUPPORTER</span><br>Umi & Abah 🤝</p>
+                            </div>
+                        </div>
+
+                        <button onclick="location.reload()" class="btn-restart">
+                            Nak ulang lagi kew ?<br>Tekan sini
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

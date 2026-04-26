@@ -1,0 +1,91 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #05050a;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+    touch-action: none;
+}
+
+.container {
+    text-align: center;
+    z-index: 10;
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+}
+
+.bg-glow {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: #4361ee;
+    filter: blur(150px);
+    opacity: 0.15;
+}
+
+/* Fasa 1: Password & Shake Error */
+.slots-container { display: flex; justify-content: center; gap: 10px; margin: 30px 0; }
+.slot { 
+    width: 60px; height: 70px; 
+    border: 2px dashed #4cc9f0; 
+    border-radius: 12px; 
+    background: rgba(255, 255, 255, 0.05); 
+    display: flex; justify-content: center; align-items: center; 
+    font-size: 2rem; font-weight: bold; 
+    transition: background 0.3s, border 0.3s;
+}
+
+.slot.correct { border: 2px solid #4cc9f0; background: rgba(76, 201, 240, 0.2); box-shadow: 0 0 15px #4cc9f0; }
+
+/* Efek Salah */
+.slot.error {
+    border-color: #ff4d4d !important;
+    background: rgba(255, 77, 77, 0.2) !important;
+    animation: shakeError 0.4s ease-in-out;
+}
+
+@keyframes shakeError {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    50% { transform: translateX(8px); }
+    75% { transform: translateX(-8px); }
+}
+
+.numbers-pool { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 50px; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 20px; min-height: 80px; }
+.draggable-number { 
+    width: 55px; height: 55px; 
+    background: #1a1a2e; border: 2px solid #4cc9f0; 
+    border-radius: 50%; display: flex; justify-content: center; align-items: center; 
+    font-weight: bold; cursor: grab; user-select: none; touch-action: none;
+    transition: opacity 0.5s ease;
+}
+
+/* Fasa 2: Kek */
+.hidden { display: none; }
+.instruction { font-size: 1.4rem; text-shadow: 0 0 10px #4cc9f0; margin-bottom: 10px; }
+.instruction-wrapper { margin-bottom: 100px; }
+.cake-wrapper { position: relative; display: inline-block; cursor: pointer; }
+.cake { font-size: 100px; animation: floating 3s infinite ease-in-out; }
+@keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+.ui-container { margin-top: 50px; display: flex; flex-direction: column; align-items: center; }
+.power-text { font-size: 0.9rem; font-weight: bold; color: #4cc9f0; margin-bottom: 8px; }
+.progress-bar { width: 180px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; border: 1px solid rgba(76, 201, 240, 0.3); }
+.progress-fill { width: 0%; height: 100%; background: #4cc9f0; box-shadow: 0 0 10px #4cc9f0; transition: 0.3s; }
+
+/* Fasa 3: Surat */
+.letter-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; z-index: 100; }
+.letter-content { background: #fff; padding: 10px; width: 85%; max-width: 420px; border-radius: 25px; color: #1a1a2e; transform: scale(0) rotate(-360deg); transition: all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+.letter-overlay.show { display: flex; }
+.letter-overlay.show .letter-content { transform: scale(1) rotate(0deg); }
+.gold-frame { border: 2px solid #d4af37; padding: 30px; border-radius: 20px; }
+.btn-restart { margin-top: 20px; padding: 12px 25px; border-radius: 50px; background: #1a1a2e; color: #fff; border: none; cursor: pointer; font-weight: bold; }
+
+.shake-mode { animation: crazyShake 0.1s infinite; }
+@keyframes crazyShake { 0% { transform: translate(2px, 2px) scale(var(--s)); } 50% { transform: translate(-2px, -2px) scale(var(--s)); } 100% { transform: translate(2px, -2px) scale(var(--s)); } }
