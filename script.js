@@ -15,17 +15,14 @@ allSounds.forEach(s => { s.volume = 1.0; s.preload = "auto"; });
 
 let audioUnlocked = false;
 
-// Fungsi khas untuk unlock bunyi dengan lebih agresif
 async function unlockAudio() {
     if (audioUnlocked) return;
-    
     const unlockPromises = allSounds.map(s => {
         return s.play().then(() => {
             s.pause();
             s.currentTime = 0;
-        }).catch(e => console.log("Audio waiting for interaction..."));
+        }).catch(e => console.log("Audio waiting..."));
     });
-
     await Promise.all(unlockPromises);
     audioUnlocked = true;
 }
@@ -42,27 +39,20 @@ const noticeBody = document.getElementById('notice-body');
 const noticeOverlay = document.getElementById('notice-overlay');
 
 async function nextStep(stepNumber) {
-    // UNLOCK AUDIO DULU
     await unlockAudio();
-    // BARU MAIN BUNYI (Sekarang gerenti ada bunyi!)
     playSound(sndClick);
-    
-    // Animasi bounce setiap kali tukar step
     noticeBody.style.animation = 'none';
     void noticeBody.offsetWidth; 
     noticeBody.style.animation = 'bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-
     document.querySelectorAll('.notice-step').forEach(step => {
         step.classList.add('hidden');
     });
     document.getElementById(`step-${stepNumber}`).classList.remove('hidden');
 }
 
-// Event listener untuk butang terakhir di Notice
 document.getElementById('final-notice-btn').addEventListener('click', async () => {
     await unlockAudio();
     playSound(sndClick);
-    
     noticeOverlay.classList.add('fade-out');
     setTimeout(() => { 
         noticeOverlay.style.display = 'none'; 
@@ -219,14 +209,32 @@ cakeWrapper.addEventListener('click', async () => {
     if (clicks >= 12) { cakeWrapper.style.transform = 'scale(20)'; cakeWrapper.style.opacity = '0'; setTimeout(showLetter, 200); }
 });
 
-// --- FASA 3: WISH LETTER ---
+// --- FASA 3: WISH LETTER (ULTRA HARD RESET) ---
 const letterContent = document.getElementById('letter-content');
+const overlay = document.getElementById('letter-overlay');
+
 function showLetter() {
     document.getElementById('game-zone').style.display = 'none';
-    const overlay = document.getElementById('letter-overlay');
+    
+    // 1. Force Reset Style & Position
     overlay.style.display = 'flex';
+    overlay.classList.remove('show');
+    letterContent.style.transform = 'scale(0.01) rotate(-360deg)';
+    letterContent.style.opacity = '0';
+    letterContent.scrollTop = 0; // Pastikan mula dari atas
+    
     playSound(sndBgm);
-    setTimeout(() => { overlay.classList.add('show'); setInterval(createConfetti, 400); }, 10);
+    
+    // 2. Double RequestAnimationFrame - Teknik paksa lukis semula
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            overlay.classList.add('show');
+            // Guna inline style untuk override sebarang cache browser
+            letterContent.style.transform = 'scale(1) rotate(0deg)';
+            letterContent.style.opacity = '1';
+            setInterval(createConfetti, 400); 
+        });
+    });
 }
 
 document.getElementById('btn-scroll-top').addEventListener('click', async () => {
