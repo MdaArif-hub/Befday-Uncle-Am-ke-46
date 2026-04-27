@@ -1,14 +1,89 @@
+// --- INITIAL SETUP & SOUNDS ---
+const sndClick = document.getElementById('snd-click');
+const sndTap = document.getElementById('snd-tap');
+const sndError = document.getElementById('snd-error');
+const sndCorrect = document.getElementById('snd-correct');
+const sndBgm = document.getElementById('snd-bgm');
+
+// Path encoding for space names
+sndTap.src = "buton/heart%20tap.mp3";
+sndError.src = "buton/oof%20error.mp3";
+sndCorrect.src = "sound/correct%20answer.mp3";
+sndBgm.src = "sound/Happy%20Birthday%20Song.mp3";
+
+const allSounds = [sndClick, sndTap, sndError, sndCorrect, sndBgm];
+allSounds.forEach(s => { s.volume = 1.0; s.preload = "auto"; });
+
+let audioUnlocked = false;
+function unlockAudio() {
+    if (audioUnlocked) return;
+    allSounds.forEach(s => {
+        s.play().then(() => { s.pause(); s.currentTime = 0; }).catch(e => {});
+    });
+    audioUnlocked = true;
+}
+
+function playSound(sound) {
+    if (sound) { sound.currentTime = 0; sound.play().catch(e => {}); }
+}
+
+// --- LOADING SCREEN (12 Seconds) ---
+const emojis = ["😎", "👨‍💼", "👔", "💪", "🔥", "💪", "👑", "✨", "🙌", "🦾", "🏎️", "⌚", "💰", "👍", "🤜", "🎂", "🥳", "💙"];
+const emojiDisplay = document.getElementById('emoji-display');
+const loadingScreen = document.getElementById('loading-screen');
+const noticeOverlay = document.getElementById('notice-overlay');
+const mainContent = document.getElementById('main-content');
+
+async function startLoading() {
+    for (let r = 0; r < 3; r++) {
+        emojiDisplay.innerHTML = "";
+        const roundEmojis = emojis.slice(r * 5, (r + 1) * 5);
+        for (const emo of roundEmojis) {
+            const span = document.createElement('span');
+            span.className = 'emoji-item';
+            span.innerText = emo;
+            emojiDisplay.appendChild(span);
+            await new Promise(res => setTimeout(res, 600)); 
+        }
+        await new Promise(res => setTimeout(res, 200)); 
+    }
+    emojiDisplay.innerHTML = "";
+    const lastEmojis = emojis.slice(15, 18);
+    for (const emo of lastEmojis) {
+        const span = document.createElement('span');
+        span.className = 'emoji-item';
+        span.innerText = emo;
+        emojiDisplay.appendChild(span);
+        await new Promise(res => setTimeout(res, 1000));
+    }
+    await new Promise(res => setTimeout(res, 500));
+    loadingScreen.classList.add('fade-out');
+    setTimeout(() => {
+        loadingScreen.style.display = 'none';
+        noticeOverlay.classList.remove('hidden'); 
+        mainContent.classList.remove('hidden');   
+    }, 1000);
+}
+window.addEventListener('load', startLoading);
+
+// --- NOTICE PANEL ---
+const noticeBody = document.getElementById('notice-body');
+document.getElementById('close-notice').addEventListener('click', () => {
+    playSound(sndClick);
+    noticeBody.classList.add('closing');
+    setTimeout(() => { noticeOverlay.style.display = 'none'; }, 600);
+});
+
+// --- FASA 1: DRAG & DROP PASSWORD ---
 const numbersPool = document.getElementById('numbers-pool');
 const slots = document.querySelectorAll('.slot');
-let correctCount = 0;
-
-// Nombor jawapan dan nombor hiasan (keliru)
 const answerNumbers = ['3', '0', '0', '4'];
 const poolValues = ['1', '7', '3', '0', '9', '0', '4', '2'];
+let correctCount = 0;
 
 poolValues.forEach(val => {
     const el = document.createElement('div');
-    el.classList.add('draggable-number');
+    el.className = 'draggable-number';
     el.innerText = val;
     makeDraggable(el);
     numbersPool.appendChild(el);
@@ -21,32 +96,31 @@ function makeDraggable(el) {
 
     function startDrag(e) {
         if (e.type === 'touchstart') e.preventDefault();
+        unlockAudio();
+        playSound(sndClick);
         const clientX = e.clientX || e.touches[0].clientX;
         const clientY = e.clientY || e.touches[0].clientY;
         const rect = el.getBoundingClientRect();
-        
         offsetX = clientX - rect.left;
         offsetY = clientY - rect.top;
 
         el.style.position = 'fixed';
-        el.style.width = rect.width + 'px';
-        el.style.height = rect.height + 'px';
+        el.style.width = '55px'; el.style.height = '55px';
+        el.style.transform = 'scale(1)';
         el.style.zIndex = 1000;
         el.style.pointerEvents = 'none';
-
-        moveAt(clientX, clientY);
 
         function moveAt(pageX, pageY) {
             el.style.left = (pageX - offsetX) + 'px';
             el.style.top = (pageY - offsetY) + 'px';
         }
+        moveAt(clientX, clientY);
 
         function onMouseMove(event) {
             const moveX = event.clientX || (event.touches ? event.touches[0].clientX : null);
             const moveY = event.clientY || (event.touches ? event.touches[0].clientY : null);
             if (moveX !== null) moveAt(moveX, moveY);
         }
-
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('touchmove', onMouseMove, {passive: false});
 
@@ -67,53 +141,30 @@ function checkSnap(el) {
     let snapped = false;
     const nRect = el.getBoundingClientRect();
     const val = el.innerText;
-
     for (let slot of slots) {
         const sRect = slot.getBoundingClientRect();
         const isOverlap = !(nRect.right < sRect.left || nRect.left > sRect.right || nRect.bottom < sRect.top || nRect.top > sRect.bottom);
-
         if (isOverlap && !slot.classList.contains('correct')) {
             if (val === slot.dataset.needed) {
-                // JAWAPAN BETUL & KOTAK BETUL
-                slot.innerText = val;
-                slot.classList.add('correct');
-                el.remove();
-                correctCount++;
-                snapped = true;
-                if (correctCount === 4) setTimeout(startCakePhase, 500);
+                slot.innerText = val; slot.classList.add('correct');
+                el.remove(); correctCount++; snapped = true;
+                if (correctCount === 4) { playSound(sndCorrect); setTimeout(startCakePhase, 1000); } 
+                else { playSound(sndClick); }
                 break; 
             } else {
-                // SALAH LETAK KOTAK
+                playSound(sndError);
                 slot.classList.add('error');
-                
-                // Cek: Adakah nombor ni sebenarnya sebahagian daripada jawapan?
                 if (answerNumbers.includes(val)) {
-                    // Kalau nombor betul tapi salah kotak, hantar balik ke pool
-                    setTimeout(() => {
-                        slot.classList.remove('error');
-                        el.style.position = 'relative';
-                        el.style.left = '0'; el.style.top = '0';
-                        el.style.zIndex = '20';
-                    }, 400);
+                    setTimeout(() => { slot.classList.remove('error'); el.style.position = 'relative'; el.style.left = '0'; el.style.top = '0'; }, 400);
                 } else {
-                    // Kalau memang nombor salah (sampah), baru fade out
                     el.style.opacity = '0';
-                    setTimeout(() => {
-                        slot.classList.remove('error');
-                        el.remove();
-                    }, 500);
+                    setTimeout(() => { slot.classList.remove('error'); el.remove(); }, 500);
                 }
-                snapped = true; 
-                break;
+                snapped = true; break;
             }
         }
     }
-
-    if (!snapped) {
-        el.style.position = 'relative';
-        el.style.left = '0'; el.style.top = '0';
-        el.style.zIndex = '20';
-    }
+    if (!snapped) { el.style.position = 'relative'; el.style.left = '0'; el.style.top = '0'; }
 }
 
 function startCakePhase() {
@@ -121,10 +172,11 @@ function startCakePhase() {
     document.getElementById('game-zone').classList.remove('hidden');
 }
 
+// --- FASA 2: TAP THE CAKE ---
 let clicks = 0;
 const cakeWrapper = document.getElementById('cake-wrapper');
 cakeWrapper.addEventListener('click', () => {
-    clicks++;
+    unlockAudio(); clicks++; playSound(sndTap);
     let progress = Math.min(Math.floor((clicks / 12) * 100), 100);
     document.getElementById('progress-fill').style.width = progress + '%';
     document.getElementById('power-val').innerText = progress;
@@ -132,31 +184,30 @@ cakeWrapper.addEventListener('click', () => {
     cakeWrapper.style.setProperty('--s', scale);
     cakeWrapper.style.transform = `scale(${scale})`;
     if (clicks >= 8) cakeWrapper.classList.add('shake-mode');
-    if (clicks >= 12) {
-        cakeWrapper.style.transform = 'scale(20)';
-        cakeWrapper.style.opacity = '0';
-        setTimeout(showLetter, 200);
-    }
+    if (clicks >= 12) { cakeWrapper.style.transform = 'scale(20)'; cakeWrapper.style.opacity = '0'; setTimeout(showLetter, 200); }
 });
+
+// --- FASA 3: WISH LETTER ---
+const letterContent = document.getElementById('letter-content');
+const btnScrollTop = document.getElementById('btn-scroll-top');
 
 function showLetter() {
     document.getElementById('game-zone').style.display = 'none';
     const overlay = document.getElementById('letter-overlay');
     overlay.style.display = 'flex';
-    setTimeout(() => {
-        overlay.classList.add('show');
-        // Confetti Loop diubah kepada 400ms supaya tak terlalu sesak
-        setInterval(createConfetti, 400);
-    }, 10);
+    playSound(sndBgm);
+    setTimeout(() => { overlay.classList.add('show'); setInterval(createConfetti, 400); }, 10);
 }
+
+// Logik Scroll ke Atas
+btnScrollTop.addEventListener('click', () => {
+    playSound(sndClick);
+    letterContent.scrollTo({ top: 0, behavior: 'smooth' });
+});
 
 function createConfetti() {
     const c = document.createElement('div');
-    // Kurangkan saiz sikit supaya lebih halus
     c.style.cssText = `position:absolute;width:6px;height:6px;background:hsl(${Math.random()*360},70%,60%);left:${Math.random()*100}vw;top:-10px;z-index:110;opacity:0.8;`;
     document.getElementById('confetti').appendChild(c);
-    c.animate([{transform:'translateY(0)'},{transform:'translateY(110vh) rotate(360deg)'}], {
-        duration: Math.random() * 2000 + 3000, 
-        easing: 'linear'
-    }).onfinish = () => c.remove();
+    c.animate([{transform:'translateY(0)'},{transform:'translateY(110vh) rotate(360deg)'}], { duration: Math.random() * 2000 + 3000, easing: 'linear' }).onfinish = () => c.remove();
 }
