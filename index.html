@@ -16,10 +16,22 @@
 
     <div id="notice-overlay" class="notice-overlay hidden">
         <div id="notice-body" class="notice-body">
-            <div class="notice-content">
-                <p>sorry tau Uncle Am kalau terkurang dari sisi apa-apapun itu dalam website ni.. masih lagi baru belajar dunia coding.. tak senang juga tapi bila dapat result rasa happy juga ✨</p>
-                <button id="close-notice" class="btn-start">jum kita mula jelajah !</button>
+            
+            <div id="step-1" class="notice-step">
+                <p>sorry tau Uncle Am kalau terkurang dari segi apapun itu dalam website ni.. masih lagi baru belajar dunia coding.. tak senang juga tapi bila dapat result rasa happy juga ✨</p>
+                <button class="btn-start" onclick="nextStep(2)">dah ready Uncle Am ? meh tekan</button>
             </div>
+
+            <div id="step-2" class="notice-step hidden">
+                <p>before kita mulakan, nak pesan untuk <b>maximum</b> kan volume, supaya sound effect semua nya kedengaran penuh sekali ~ baru ada interaction hihi</p>
+                <button class="btn-start" onclick="nextStep(3)">jum jumm ~</button>
+            </div>
+
+            <div id="step-3" class="notice-step hidden">
+                <p>ohh japp .. sebelum mula, kalau Uncle Am tekan 2 button yang sebelum ni tu.. ada bunyi tak ? kalau tak .. jangan explore lagi bagitau Arif nanti pakai fon Arif je buat</p>
+                <button class="btn-start" id="final-notice-btn">kalau tak, jangan sambung.. tak syok nanti</button>
+            </div>
+
         </div>
     </div>
 
@@ -67,15 +79,10 @@
                         <div class="header-icon">✉️</div>
                         <h1 class="letter-main-title">Selamat Hari Jadi, <span style="color: #4361ee;">Uncle Am</span></h1>
                         <h2 class="letter-sub-title">yang ke-46 ! 🎂</h2>
-                        
                         <div class="line-divider"></div>
-                        
                         <div class="letter-text-body">
                             <p><i>( nyanyi pakai nada "Selamat .. Hari Raya, kami ucapkan pada semua ~" 🎶 )</i></p>
-                            <span class="lyrics-box">
-                                "Selamat .. hari jadi .. kepada <b>Uncle Am</b>, si pakcik kami ! <br>
-                                Semoga .. di hari yang bernilai ini .. semoga Uncle Am sentiasa dirahmati dan diberkati ~" 🎤✨
-                            </span>
+                            <span class="lyrics-box">"Selamat .. hari jadi .. kepada <b>Uncle Am</b>, si pakcik kami ! <br>Semoga .. di hari yang bernilai ini .. semoga Uncle Am sentiasa dirahmati dan diberkati ~" 🎤✨</span>
                             <p>Semoga, semoga dan semoga.. Uncle Am sentiasa <b>dimurahkan rezeki</b>, eh <span class="highlight-text">dimahalkan rezeki</span>.. dipermudahkan urusan, kerja projek sentiasa berjalan lancar, bisnes berjalan baik untuk dapat bersedekah banyak, belanja <b>Jad Jeddah</b> bawak jejalan balik kampung naik <span style="color: #e63946; font-weight: bold;">GTR</span> 😆, diberkati segala urusan dunia akhirat, dan sentiasa berada dalam lingkungan orang-orang baik.</p>
                             <p><i>urmmmm, apa lagi eh ..</i> 🤔</p>
                             <p>semuanya la ~ hihi ... 🤭 InshaAllah sempena harijadi ni juga Uncle Am doakan kami ni yang baru nak tumbuh besar, baru mula dengan akar dapat <b>tumbuh tegak macam pokok kayu jati</b>, kuat mental fizikal menghadapi dunia 20-an nihh, masih sentiasa ingat balik kepada keluarga, dan sebagainya. 🌳💪</p>
@@ -89,14 +96,9 @@
                                 <p><span class="credit-role">SUPPORTER</span><br>Umi & Abah 🤝</p>
                             </div>
                         </div>
-
                         <div class="wish-button-group">
-                            <button id="btn-scroll-top" class="btn-wish">
-                                Nak baca balik dari atas ?<br>Tekan sini
-                            </button>
-                            <button onclick="location.reload()" class="btn-wish btn-dark">
-                                Nak ulang lagi kew ?<br>Tekan sini
-                            </button>
+                            <button id="btn-scroll-top" class="btn-wish">Nak baca balik dari atas ?<br>Tekan sini</button>
+                            <button onclick="location.reload()" class="btn-wish btn-dark">Nak ulang lagi kew ?<br>Tekan sini</button>
                         </div>
                     </div>
                 </div>

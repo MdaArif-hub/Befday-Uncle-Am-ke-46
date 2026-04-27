@@ -5,7 +5,6 @@ const sndError = document.getElementById('snd-error');
 const sndCorrect = document.getElementById('snd-correct');
 const sndBgm = document.getElementById('snd-bgm');
 
-// Path encoding for space names
 sndTap.src = "buton/heart%20tap.mp3";
 sndError.src = "buton/oof%20error.mp3";
 sndCorrect.src = "sound/correct%20answer.mp3";
@@ -27,11 +26,38 @@ function playSound(sound) {
     if (sound) { sound.currentTime = 0; sound.play().catch(e => {}); }
 }
 
+// --- MULTI-STEP NOTICE LOGIC ---
+const noticeBody = document.getElementById('notice-body');
+const noticeOverlay = document.getElementById('notice-overlay');
+
+function nextStep(stepNumber) {
+    playSound(sndClick);
+    unlockAudio(); // Unlock audio on first interaction
+    
+    // Bounce effect transition
+    noticeBody.style.animation = 'none';
+    void noticeBody.offsetWidth; // Trigger reflow
+    noticeBody.style.animation = 'bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+
+    // Hide all steps and show the targeted one
+    document.querySelectorAll('.notice-step').forEach(step => {
+        step.classList.add('hidden');
+    });
+    document.getElementById(`step-${stepNumber}`).classList.remove('hidden');
+}
+
+document.getElementById('final-notice-btn').addEventListener('click', () => {
+    playSound(sndClick);
+    noticeBody.classList.add('closing');
+    setTimeout(() => { 
+        noticeOverlay.style.display = 'none'; 
+    }, 600);
+});
+
 // --- LOADING SCREEN (12 Seconds) ---
 const emojis = ["😎", "👨‍💼", "👔", "💪", "🔥", "💪", "👑", "✨", "🙌", "🦾", "🏎️", "⌚", "💰", "👍", "🤜", "🎂", "🥳", "💙"];
 const emojiDisplay = document.getElementById('emoji-display');
 const loadingScreen = document.getElementById('loading-screen');
-const noticeOverlay = document.getElementById('notice-overlay');
 const mainContent = document.getElementById('main-content');
 
 async function startLoading() {
@@ -66,14 +92,6 @@ async function startLoading() {
 }
 window.addEventListener('load', startLoading);
 
-// --- NOTICE PANEL ---
-const noticeBody = document.getElementById('notice-body');
-document.getElementById('close-notice').addEventListener('click', () => {
-    playSound(sndClick);
-    noticeBody.classList.add('closing');
-    setTimeout(() => { noticeOverlay.style.display = 'none'; }, 600);
-});
-
 // --- FASA 1: DRAG & DROP PASSWORD ---
 const numbersPool = document.getElementById('numbers-pool');
 const slots = document.querySelectorAll('.slot');
@@ -103,12 +121,9 @@ function makeDraggable(el) {
         const rect = el.getBoundingClientRect();
         offsetX = clientX - rect.left;
         offsetY = clientY - rect.top;
-
         el.style.position = 'fixed';
         el.style.width = '55px'; el.style.height = '55px';
-        el.style.transform = 'scale(1)';
-        el.style.zIndex = 1000;
-        el.style.pointerEvents = 'none';
+        el.style.zIndex = 1000; el.style.pointerEvents = 'none';
 
         function moveAt(pageX, pageY) {
             el.style.left = (pageX - offsetX) + 'px';
@@ -189,8 +204,6 @@ cakeWrapper.addEventListener('click', () => {
 
 // --- FASA 3: WISH LETTER ---
 const letterContent = document.getElementById('letter-content');
-const btnScrollTop = document.getElementById('btn-scroll-top');
-
 function showLetter() {
     document.getElementById('game-zone').style.display = 'none';
     const overlay = document.getElementById('letter-overlay');
@@ -199,8 +212,7 @@ function showLetter() {
     setTimeout(() => { overlay.classList.add('show'); setInterval(createConfetti, 400); }, 10);
 }
 
-// Logik Scroll ke Atas
-btnScrollTop.addEventListener('click', () => {
+document.getElementById('btn-scroll-top').addEventListener('click', () => {
     playSound(sndClick);
     letterContent.scrollTo({ top: 0, behavior: 'smooth' });
 });
