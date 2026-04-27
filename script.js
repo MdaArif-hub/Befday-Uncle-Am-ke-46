@@ -14,47 +14,62 @@ const allSounds = [sndClick, sndTap, sndError, sndCorrect, sndBgm];
 allSounds.forEach(s => { s.volume = 1.0; s.preload = "auto"; });
 
 let audioUnlocked = false;
-function unlockAudio() {
+
+// Fungsi khas untuk unlock bunyi dengan lebih agresif
+async function unlockAudio() {
     if (audioUnlocked) return;
-    allSounds.forEach(s => {
-        s.play().then(() => { s.pause(); s.currentTime = 0; }).catch(e => {});
+    
+    const unlockPromises = allSounds.map(s => {
+        return s.play().then(() => {
+            s.pause();
+            s.currentTime = 0;
+        }).catch(e => console.log("Audio waiting for interaction..."));
     });
+
+    await Promise.all(unlockPromises);
     audioUnlocked = true;
 }
 
 function playSound(sound) {
-    if (sound) { sound.currentTime = 0; sound.play().catch(e => {}); }
+    if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(e => console.log("Sound block:", e));
+    }
 }
 
 // --- MULTI-STEP NOTICE LOGIC ---
 const noticeBody = document.getElementById('notice-body');
 const noticeOverlay = document.getElementById('notice-overlay');
 
-function nextStep(stepNumber) {
+async function nextStep(stepNumber) {
+    // UNLOCK AUDIO DULU
+    await unlockAudio();
+    // BARU MAIN BUNYI (Sekarang gerenti ada bunyi!)
     playSound(sndClick);
-    unlockAudio(); // Unlock audio on first interaction
     
-    // Bounce effect transition
+    // Animasi bounce setiap kali tukar step
     noticeBody.style.animation = 'none';
-    void noticeBody.offsetWidth; // Trigger reflow
+    void noticeBody.offsetWidth; 
     noticeBody.style.animation = 'bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
 
-    // Hide all steps and show the targeted one
     document.querySelectorAll('.notice-step').forEach(step => {
         step.classList.add('hidden');
     });
     document.getElementById(`step-${stepNumber}`).classList.remove('hidden');
 }
 
-document.getElementById('final-notice-btn').addEventListener('click', () => {
+// Event listener untuk butang terakhir di Notice
+document.getElementById('final-notice-btn').addEventListener('click', async () => {
+    await unlockAudio();
     playSound(sndClick);
-    noticeBody.classList.add('closing');
+    
+    noticeOverlay.classList.add('fade-out');
     setTimeout(() => { 
         noticeOverlay.style.display = 'none'; 
-    }, 600);
+    }, 800);
 });
 
-// --- LOADING SCREEN (12 Seconds) ---
+// --- LOADING SCREEN ---
 const emojis = ["😎", "👨‍💼", "👔", "💪", "🔥", "💪", "👑", "✨", "🙌", "🦾", "🏎️", "⌚", "💰", "👍", "🤜", "🎂", "🥳", "💙"];
 const emojiDisplay = document.getElementById('emoji-display');
 const loadingScreen = document.getElementById('loading-screen');
@@ -190,8 +205,10 @@ function startCakePhase() {
 // --- FASA 2: TAP THE CAKE ---
 let clicks = 0;
 const cakeWrapper = document.getElementById('cake-wrapper');
-cakeWrapper.addEventListener('click', () => {
-    unlockAudio(); clicks++; playSound(sndTap);
+cakeWrapper.addEventListener('click', async () => {
+    await unlockAudio(); 
+    clicks++; 
+    playSound(sndTap);
     let progress = Math.min(Math.floor((clicks / 12) * 100), 100);
     document.getElementById('progress-fill').style.width = progress + '%';
     document.getElementById('power-val').innerText = progress;
@@ -212,7 +229,8 @@ function showLetter() {
     setTimeout(() => { overlay.classList.add('show'); setInterval(createConfetti, 400); }, 10);
 }
 
-document.getElementById('btn-scroll-top').addEventListener('click', () => {
+document.getElementById('btn-scroll-top').addEventListener('click', async () => {
+    await unlockAudio();
     playSound(sndClick);
     letterContent.scrollTo({ top: 0, behavior: 'smooth' });
 });

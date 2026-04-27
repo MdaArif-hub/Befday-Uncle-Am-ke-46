@@ -5,11 +5,9 @@ body {
     min-height: 100vh; background: #05050a; color: #fff;
     font-family: 'Poppins', sans-serif; overflow: hidden; 
     touch-action: none;
-    /* Tambahan: Hilangkan highlight biru bila tekan kat mobile */
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Supaya semua elemen interaktif tak ada highlight biru */
 button, .draggable-number, .cake-wrapper, .slot {
     -webkit-tap-highlight-color: transparent;
     outline: none;
@@ -25,34 +23,38 @@ button, .draggable-number, .cake-wrapper, .slot {
 .emoji-item { font-size: 2.2rem; animation: bounceEmoji 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
 @keyframes bounceEmoji { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 .wait-text { margin-top: 25px; font-weight: 300; font-size: 1rem; letter-spacing: 2px; color: #4cc9f0; opacity: 0.8; text-align: center; }
-.fade-out { opacity: 0; pointer-events: none; }
+.fade-out { opacity: 0 !important; pointer-events: none; transition: opacity 0.8s ease-out !important; }
 
 /* NOTICE PANEL */
-.notice-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 2000; display: flex; justify-content: center; align-items: center; padding: 25px; }
+.notice-overlay { 
+    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); 
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); 
+    z-index: 2000; display: flex; justify-content: center; align-items: center; padding: 25px;
+    transition: opacity 0.8s ease-out;
+}
 .notice-body { background: #fff; color: #1a1a2e; padding: 30px; border-radius: 25px; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-.notice-body.closing { animation: bounceOut 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; }
 @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); } }
-@keyframes bounceOut { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(0); opacity: 0; } }
+
 .btn-start { margin-top: 20px; padding: 12px 25px; background: #000; color: #fff; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 
 /* MAIN CONTENT */
-.container { text-align: center; z-index: 10; width: 100%; max-width: 500px; padding: 20px; }
+.container { text-align: center; z-index: 10; width: 100%; max-width: 500px; padding: 20px; transition: opacity 0.5s; }
 .bg-glow { position: absolute; width: 300px; height: 300px; background: #4361ee; filter: blur(150px); opacity: 0.15; }
 .hidden { display: none !important; }
 
 /* GAME PASSWORD */
 .slots-container { display: flex; justify-content: center; gap: 10px; margin: 30px 0; }
-.slot { width: 60px; height: 70px; border: 2px dashed #4cc9f0; border-radius: 12px; background: rgba(255, 255, 255, 0.05); display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: bold; transition: 0.3s; -webkit-tap-highlight-color: transparent; }
+.slot { width: 60px; height: 70px; border: 2px dashed #4cc9f0; border-radius: 12px; background: rgba(255, 255, 255, 0.05); display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: bold; transition: 0.3s; }
 .slot.correct { border: 2px solid #4cc9f0; background: rgba(76, 201, 240, 0.2); box-shadow: 0 0 15px #4cc9f0; }
 .slot.error { border-color: #ff4d4d !important; background: rgba(255, 77, 77, 0.2) !important; animation: shakeError 0.4s ease-in-out; }
 @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 50% { transform: translateX(8px); } 75% { transform: translateX(-8px); } }
 .numbers-pool { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 50px; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 20px; min-height: 80px; }
-.draggable-number { width: 55px; height: 55px; background: #1a1a2e; border: 2px solid #4cc9f0; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; cursor: grab; user-select: none; touch-action: none; -webkit-tap-highlight-color: transparent; }
+.draggable-number { width: 55px; height: 55px; background: #1a1a2e; border: 2px solid #4cc9f0; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; cursor: grab; user-select: none; touch-action: none; }
 
 /* CAKE PHASE */
 .instruction { font-size: 1.4rem; text-shadow: 0 0 10px #4cc9f0; margin-bottom: 10px; }
 .instruction-wrapper { margin-bottom: 100px; }
-.cake-wrapper { position: relative; display: inline-block; cursor: pointer; transition: transform 0.2s; -webkit-tap-highlight-color: transparent; }
+.cake-wrapper { position: relative; display: inline-block; cursor: pointer; transition: transform 0.2s; }
 .cake { font-size: 100px; animation: floating 3s infinite ease-in-out; }
 @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 .ui-container { margin-top: 50px; display: flex; flex-direction: column; align-items: center; }
@@ -60,9 +62,9 @@ button, .draggable-number, .cake-wrapper, .slot {
 .progress-bar { width: 180px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; border: 1px solid rgba(76, 201, 240, 0.3); }
 .progress-fill { width: 0%; height: 100%; background: #4cc9f0; box-shadow: 0 0 10px #4cc9f0; transition: 0.3s; }
 
-/* LETTER WISH & WISH BUTTONS */
+/* LETTER WISH */
 .letter-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; z-index: 100; }
-.letter-content { background: #fff; padding: 10px; width: 85%; max-width: 420px; border-radius: 25px; color: #1a1a2e; transform: scale(0) rotate(-360deg); transition: all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); overflow-y: auto; max-height: 85vh; -webkit-tap-highlight-color: transparent; }
+.letter-content { background: #fff; padding: 10px; width: 85%; max-width: 420px; border-radius: 25px; color: #1a1a2e; transform: scale(0) rotate(-360deg); transition: all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); overflow-y: auto; max-height: 85vh; }
 .letter-overlay.show { display: flex; }
 .letter-overlay.show .letter-content { transform: scale(1) rotate(0deg); }
 .gold-frame { border: 2px solid #d4af37; padding: 25px; border-radius: 20px; }
@@ -74,42 +76,13 @@ button, .draggable-number, .cake-wrapper, .slot {
 .line-divider { width: 50px; height: 3px; background: #d4af37; margin: 20px auto; }
 
 /* WISH BUTTONS SIMETRI */
-.wish-button-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    justify-content: center;
-    margin-top: 30px;
-}
-
+.wish-button-group { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 30px; }
 .btn-wish {
-    flex: 1;
-    min-width: 140px;
-    padding: 15px 10px;
-    border-radius: 18px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.8rem;
-    font-family: 'Poppins', sans-serif;
-    transition: transform 0.2s, background 0.2s;
-    background: #e9ecef;
-    color: #495057;
-    border: 1px solid #ced4da;
-    line-height: 1.4;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    -webkit-tap-highlight-color: transparent;
+    flex: 1; min-width: 140px; padding: 15px 10px; border-radius: 18px; border: none; cursor: pointer; font-weight: 600; font-size: 0.8rem;
+    font-family: 'Poppins', sans-serif; transition: transform 0.2s, background 0.2s; background: #e9ecef; color: #495057; border: 1px solid #ced4da;
+    line-height: 1.4; display: flex; align-items: center; justify-content: center; text-align: center;
 }
-
-.btn-wish.btn-dark {
-    background: #1a1a2e;
-    color: #fff;
-    border: none;
-}
-
+.btn-wish.btn-dark { background: #1a1a2e; color: #fff; border: none; }
 .btn-wish:active { transform: scale(0.95); }
 
 /* ANIMATIONS */
