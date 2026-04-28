@@ -209,32 +209,33 @@ cakeWrapper.addEventListener('click', async () => {
     if (clicks >= 12) { cakeWrapper.style.transform = 'scale(20)'; cakeWrapper.style.opacity = '0'; setTimeout(showLetter, 200); }
 });
 
-// --- FASA 3: WISH LETTER (ULTRA HARD RESET) ---
-const letterContent = document.getElementById('letter-content');
-const overlay = document.getElementById('letter-overlay');
+// --- FASA 3: WISH LETTER (THE FIX) ---
+const letterContent = document.querySelector('.letter-content');
+const overlay = document.querySelector('.letter-overlay');
 
 function showLetter() {
     document.getElementById('game-zone').style.display = 'none';
     
-    // 1. Force Reset Style & Position
+    // Reset state asal
     overlay.style.display = 'flex';
-    overlay.classList.remove('show');
-    letterContent.style.transform = 'scale(0.01) rotate(-360deg)';
-    letterContent.style.opacity = '0';
-    letterContent.scrollTop = 0; // Pastikan mula dari atas
+    overlay.classList.remove('show', 'active-animation');
+    letterContent.scrollTop = 0;
+    
+    // Force Reflow (Penting untuk Mobile!)
+    void overlay.offsetWidth;
     
     playSound(sndBgm);
     
-    // 2. Double RequestAnimationFrame - Teknik paksa lukis semula
-    requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            overlay.classList.add('show');
-            // Guna inline style untuk override sebarang cache browser
-            letterContent.style.transform = 'scale(1) rotate(0deg)';
-            letterContent.style.opacity = '1';
-            setInterval(createConfetti, 400); 
-        });
-    });
+    // Guna setTimeout pendek untuk pastikan display: flex dah di-apply
+    setTimeout(() => {
+        overlay.classList.add('show');
+        
+        // Lepas overlay muncul, baru trigger animasi kad
+        setTimeout(() => {
+            overlay.classList.add('active-animation');
+            setInterval(createConfetti, 400);
+        }, 100);
+    }, 50);
 }
 
 document.getElementById('btn-scroll-top').addEventListener('click', async () => {
