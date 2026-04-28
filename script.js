@@ -5,32 +5,48 @@ const sndError = document.getElementById('snd-error');
 const sndCorrect = document.getElementById('snd-correct');
 const sndBgm = document.getElementById('snd-bgm');
 
-sndTap.src = "buton/heart%20tap.mp3";
-sndError.src = "buton/oof%20error.mp3";
-sndCorrect.src = "sound/correct%20answer.mp3";
-sndBgm.src = "sound/Happy%20Birthday%20Song.mp3";
+// Fix pathing dengan decodeURIComponent untuk elak isu karakter %20 pada sesetengah browser phone
+sndTap.src = "buton/heart tap.mp3";
+sndError.src = "buton/oof error.mp3";
+sndCorrect.src = "sound/correct answer.mp3";
+sndBgm.src = "sound/Happy Birthday Song.mp3";
 
 const allSounds = [sndClick, sndTap, sndError, sndCorrect, sndBgm];
-allSounds.forEach(s => { s.volume = 1.0; s.preload = "auto"; });
+allSounds.forEach(s => { 
+    s.volume = 1.0; 
+    s.preload = "auto"; 
+});
 
 let audioUnlocked = false;
 
+// Fungsi unlock yang lebih power untuk phone Realme/Oppo/Xiaomi
 async function unlockAudio() {
     if (audioUnlocked) return;
-    const unlockPromises = allSounds.map(s => {
-        return s.play().then(() => {
+    
+    for (let s of allSounds) {
+        try {
+            // Kita "pancing" browser dengan play & pause sepantas kilat
+            await s.play();
             s.pause();
             s.currentTime = 0;
-        }).catch(e => console.log("Audio waiting..."));
-    });
-    await Promise.all(unlockPromises);
+        } catch (e) {
+            console.log("Audio pancingan gagal:", e);
+        }
+    }
     audioUnlocked = true;
+    console.log("Semua audio telah di-unlock! ✅");
 }
 
 function playSound(sound) {
     if (sound) {
         sound.currentTime = 0;
-        sound.play().catch(e => console.log("Sound block:", e));
+        // Gunakan Promise untuk pastikan audio jalan
+        let playPromise = sound.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log("Playback dihalang oleh browser:", error);
+            });
+        }
     }
 }
 
@@ -39,11 +55,14 @@ const noticeBody = document.getElementById('notice-body');
 const noticeOverlay = document.getElementById('notice-overlay');
 
 async function nextStep(stepNumber) {
+    // Setiap kali tekan button "Next", kita cuba unlock lagi sampai berjaya
     await unlockAudio();
     playSound(sndClick);
+    
     noticeBody.style.animation = 'none';
     void noticeBody.offsetWidth; 
     noticeBody.style.animation = 'bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+    
     document.querySelectorAll('.notice-step').forEach(step => {
         step.classList.add('hidden');
     });
@@ -51,7 +70,7 @@ async function nextStep(stepNumber) {
 }
 
 document.getElementById('final-notice-btn').addEventListener('click', async () => {
-    await unlockAudio();
+    await unlockAudio(); // Langkah terakhir pastikan semua ready
     playSound(sndClick);
     noticeOverlay.classList.add('fade-out');
     setTimeout(() => { 
@@ -119,7 +138,7 @@ function makeDraggable(el) {
 
     function startDrag(e) {
         if (e.type === 'touchstart') e.preventDefault();
-        unlockAudio();
+        unlockAudio(); // Unlock audio masa user mula drag
         playSound(sndClick);
         const clientX = e.clientX || e.touches[0].clientX;
         const clientY = e.clientY || e.touches[0].clientY;
@@ -168,7 +187,10 @@ function checkSnap(el) {
             if (val === slot.dataset.needed) {
                 slot.innerText = val; slot.classList.add('correct');
                 el.remove(); correctCount++; snapped = true;
-                if (correctCount === 4) { playSound(sndCorrect); setTimeout(startCakePhase, 1000); } 
+                if (correctCount === 4) { 
+                    playSound(sndCorrect); 
+                    setTimeout(startCakePhase, 1000); 
+                } 
                 else { playSound(sndClick); }
                 break; 
             } else {
@@ -206,31 +228,29 @@ cakeWrapper.addEventListener('click', async () => {
     cakeWrapper.style.setProperty('--s', scale);
     cakeWrapper.style.transform = `scale(${scale})`;
     if (clicks >= 8) cakeWrapper.classList.add('shake-mode');
-    if (clicks >= 12) { cakeWrapper.style.transform = 'scale(20)'; cakeWrapper.style.opacity = '0'; setTimeout(showLetter, 200); }
+    if (clicks >= 12) { 
+        cakeWrapper.style.transform = 'scale(20)'; 
+        cakeWrapper.style.opacity = '0'; 
+        setTimeout(showLetter, 200); 
+    }
 });
 
-// --- FASA 3: WISH LETTER (THE FIX) ---
+// --- FASA 3: WISH LETTER ---
 const letterContent = document.querySelector('.letter-content');
 const overlay = document.querySelector('.letter-overlay');
 
 function showLetter() {
     document.getElementById('game-zone').style.display = 'none';
-    
-    // Reset state asal
     overlay.style.display = 'flex';
     overlay.classList.remove('show', 'active-animation');
     letterContent.scrollTop = 0;
     
-    // Force Reflow (Penting untuk Mobile!)
     void overlay.offsetWidth;
     
     playSound(sndBgm);
     
-    // Guna setTimeout pendek untuk pastikan display: flex dah di-apply
     setTimeout(() => {
         overlay.classList.add('show');
-        
-        // Lepas overlay muncul, baru trigger animasi kad
         setTimeout(() => {
             overlay.classList.add('active-animation');
             setInterval(createConfetti, 400);
